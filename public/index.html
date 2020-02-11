@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="Cache-Control" content="private">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=0" />
+  <meta name="theme-color" content="#000000" />
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+
+  <!-- TODO 调试时打开Eruda -->
+  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    if (window.localStorage.debuggerFlag === 'y') {
+      eruda.init();
+    }
+  </script>
+
+  <title></title>
+  <script>
+    ! function (n) {
+      var e = n.document,
+        t = e.documentElement,
+        i = 750,
+        d = i / 100,
+        o = "orientationchange" in n ? "orientationchange" : "resize",
+        a = function () {
+          var n = t.clientWidth || 320;
+          t.style.fontSize = n / d + "px"
+        };
+      e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
+    }(window);
+  </script>
+  <script src="https://a.alipayobjects.com/g/h5-lib/alipayjsapi/3.0.5/alipayjsapi.inc.min.js"></script>
+  <script src="https://a.alipayobjects.com/g/component/antbridge/1.1.4/antbridge.min.js"></script>
+  <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278056481&web_id=1278056481"></script>
+  <style>
+    a[title="站长统计"] {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div class="root" id="root"></div>
+  <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+</body>
+
+<script>
+  function getCookie(name) {
+    const reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+    const arr = document.cookie.match(reg);
+    if (arr) {
+      return unescape(arr[2]);
+    }
+    return null;
+  }
+  if (getCookie('load') === '2') {
+    var div = document.createElement('div');
+    div.className = 'testMode';
+    document.body.append(div)
+  }
+</script>
+
+</html>

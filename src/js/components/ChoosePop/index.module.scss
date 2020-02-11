@@ -1,0 +1,38 @@
+.container {
+  padding: 0.4rem;
+  text-align: left;
+}
+.title {
+  font-size: 0.3rem;
+  text-shadow: 0 0;
+  color: #333;
+  text-align: center;
+}
+.box {
+  margin: 0.3rem 0;
+  max-height: 3rem;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.item {
+  display: flex;
+  align-items: center;
+  padding: 0.2rem;
+  background-color: #eee;
+  border-radius: 0.1rem;
+  margin-bottom: 0.2rem;
+
+  &.active {
+    background-color: #0e8ee9;
+    color: #fff;
+
+    &:before {
+      content: "";
+      width: 0.26rem;
+      height: 0.22rem;
+      margin-right: 0.2rem;
+      background: url("../../../assets/images/picked.png");
+      background-size: contain;
+    }
+  }
+}

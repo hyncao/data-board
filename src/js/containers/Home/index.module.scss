@@ -1,0 +1,128 @@
+.lineHead {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, #71a2fe, #548df7);
+  color: #fff;
+}
+.lineSubTitle {
+  font-size: 0.26rem;
+}
+.lineTitle {
+  font-size: 0.6rem;
+  margin: 0.2rem 0;
+}
+.lineDate {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.3rem;
+  span {
+    font-size: 0.22rem;
+    vertical-align: top;
+  }
+}
+.arrow {
+  display: inline-block;
+  vertical-align: top;
+  border: 0.08rem solid transparent;
+  border-top: 0.1rem solid #fff;
+  margin-top: 0.06rem;
+  margin-left: 0.1rem;
+}
+.numData {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #fff;
+}
+.numDataItem {
+  width: 50%;
+  padding: 0.3rem 0;
+  text-align: center;
+}
+.numLabel {
+  font-size: 0.28rem;
+}
+.numValue {
+  font-size: 0.32rem;
+  text-shadow: 0 0;
+  margin-top: 0.2rem;
+}
+.numExtra {
+  margin-top: 0.2rem;
+}
+.green,
+.red {
+  margin-left: 0.1rem;
+}
+.green {
+  color: #08c239;
+}
+.red {
+  color: #ee3a58;
+}
+.barChart {
+  margin-top: 0.4rem;
+  background-color: #fff;
+  padding: 0.4rem 0;
+}
+.barTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.4rem;
+  .title {
+    display: flex;
+    align-items: center;
+    font-size: 0.28rem;
+    text-shadow: 0 0;
+    &:before {
+      content: "";
+      display: inline-block;
+      width: 0.04rem;
+      height: 0.26rem;
+      background-color: #333;
+      margin-right: 0.1rem;
+    }
+  }
+}
+.colorTips {
+  display: flex;
+  align-items: center;
+}
+.blueTips,
+.greenTips {
+  width: 0.5rem;
+  height: 0.2rem;
+  margin-left: 0.3rem;
+  margin-right: 0.1rem;
+}
+.blueTips {
+  background-color: #5885fa;
+}
+.greenTips {
+  background-color: #0cc32d;
+}
+.filterEnterBox {
+  margin: 0.3rem 0;
+  padding: 0 0.4rem;
+}
+.filterEnterItem {
+  display: inline-block;
+  height: 0.6rem;
+  line-height: 0.6rem;
+  border: 0.01rem solid #aaa;
+  border-radius: 0.6rem;
+  padding: 0 0.3rem;
+  font-size: 0.26rem;
+}
+.itemArrow {
+  display: inline-block;
+  vertical-align: top;
+  border: 0.08rem solid transparent;
+  border-top: 0.1rem solid #333;
+  margin-top: 0.24rem;
+  margin-left: 0.1rem;
+}
