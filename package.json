@@ -179,8 +179,5 @@
     "less-loader": "^5.0.0"
   },
   "homepage": ".",
-  "proxy": "http://220.184.148.119:8858",
-  "proxy1": "http://172.16.57.155:7300/mock/5dc28089077a675584666015/",
-  "proxy2": "http://dev.jujienet.com:8081/",
-  "proxy3": "https://litevip.jujienet.com/"
+  "proxy": "http://115.200.229.203:8848"
 }

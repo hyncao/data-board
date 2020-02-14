@@ -11,7 +11,7 @@ export const secondUrl = '/';
 
 export const connectSymbol = '-';
 
-export const apiUrl = `/data${secondUrl}api/`;
+export const apiUrl = `/litevip-async/db/`;
 export const preUrl = `/data${connectSymbol}board${secondUrl}`;
 
 // export const appUrl = `https://litevip.jujienet.com${preUrl}`;
@@ -112,17 +112,18 @@ export const jumpUrl = (url, history) => {
 
 axios.interceptors.response.use(response => {
   // 对响应数据做点什么
-  if (response.data.code === 200) {
-    return response.data;
-  } else if (response.data.code === 4001) {
-    // token过期
-    const cnEnterId = getLS('cnEnterId');
-    window.location.replace(`https://litevip.jujienet.com/litevip/index/${cnEnterId}`);
-    return false;
-  } else {
-    tips(response.data.msg, 'fail');
-    return false;
-  }
+  return response.data;
+  // if (response.data.code === 200) {
+  //   return response.data;
+  // } else if (response.data.code === 4001) {
+  //   // token过期
+  //   const cnEnterId = getLS('cnEnterId');
+  //   window.location.replace(`https://litevip.jujienet.com/litevip/index/${cnEnterId}`);
+  //   return false;
+  // } else {
+  //   tips(response.data.msg, 'fail');
+  //   return false;
+  // }
 }, error => {
   // 对响应错误做点什么
   if (!error.response) {
