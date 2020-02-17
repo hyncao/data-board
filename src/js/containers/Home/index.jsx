@@ -288,18 +288,18 @@ class Home extends Component {
         )
       },
       {
-        id: "rateOfConversionRate",
+        id: "todayConversiontRate",
         label: "昨日转化率",
-        value: `${(numData.rateOfConversionRate * 100).toFixed(2)}%`,
+        value: `${(numData.todayConversiontRate * 100).toFixed(2)}%`,
         extraRender: (
           <div>
             较前日{" "}
             <span
               className={
-                numData.todayConversiontRate < 0 ? styles.green : styles.red
+                numData.rateOfConversionRate < 0 ? styles.green : styles.red
               }
             >
-              {`${(numData.todayConversiontRate * 100).toFixed(2)}%`}
+              {`${(numData.rateOfConversionRate * 100).toFixed(2)}%`}
             </span>
           </div>
         )

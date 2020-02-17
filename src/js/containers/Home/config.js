@@ -28,7 +28,8 @@ export const lineChartConfig = {
         color: "#fff",
         fontSize: "20px"
       }
-    }
+    },
+    max: 24,
   },
   yAxis: {
     gridLineColor: "transparent",
@@ -49,7 +50,7 @@ export const lineChartConfig = {
     useHTML: true,
     headerFormat: "",
     pointFormat:
-      '<span style="font-size: 26px; color: #555;">{point.x}日: {point.y}</span>'
+      '<span style="font-size: 26px; color: #555;">{point.x}: {point.y}</span>'
   },
   series: [
     {
