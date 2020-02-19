@@ -5,8 +5,8 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { ChoosePop } from "app/components";
 import { lineChartConfig, barChartConfig } from "./config";
-import { getTrade, getSummary } from "app/service";
-import { dateFormat, tips, hideTips, delay } from "app/lib/utils";
+import { getTrade, getSummary, getProvince } from "app/service";
+import { dateFormat, tips, hideTips, num2Percent } from "app/lib/utils";
 import styles from "./index.module.scss";
 
 @inject("historyStore")
@@ -22,89 +22,57 @@ class Home extends Component {
       showCalendar: false,
       newUser: 0,
       lineData: [],
-      barData: [
-        {
-          label: "中国电信",
-          orderNum: 200,
-          cr: 20
-        },
-        {
-          label: "中国联通",
-          orderNum: 300,
-          cr: 40
-        },
-        {
-          label: "中国移动",
-          orderNum: 400,
-          cr: 30
-        }
-      ],
+      allProvinceData: [],
+      groupData: [],
       showChoosePop: false,
-      numData: {},
+      numData: {
+        allTradeCnt: '暂无',
+        allPayment: '暂无',
+        monthTradeCnt: '暂无',
+        monthPayment: '暂无',
+        yesterdayTradeCnt: '暂无',
+        tradeChangeRate: '暂无',
+        todayConversiontRate: '暂无',
+        rateOfConversionRate: '暂无',
+        todayTradeCnt: '暂无',
+        todayUv: '暂无',
+      },
       filterData: [],
       operatorFilterBack: "全部运营商",
       provinceFilterBack: "全部地区",
       operatorData: [
         {
-          label: "中国电信",
+          label: "电信",
           value: "0",
           active: false
         },
         {
-          label: "中国联通",
+          label: "联通",
           value: "1",
           active: false
         },
         {
-          label: "中国移动",
+          label: "移动",
           value: "2",
           active: false
         }
       ],
-      provinceData: [
-        {
-          label: "浙江",
-          value: "0",
-          active: false
-        },
-        {
-          label: "上海",
-          value: "1",
-          active: false
-        },
-        {
-          label: "北京",
-          value: "2",
-          active: false
-        },
-        {
-          label: "辽宁",
-          value: "3",
-          active: false
-        },
-        {
-          label: "黑龙江",
-          value: "4",
-          active: false
-        },
-        {
-          label: "吉林",
-          value: "5",
-          active: false
-        }
-      ]
+      provinceData: []
     };
 
-    this.renderLineChart = this.renderLineChart.bind(this);
-    this.renderBarChart = this.renderBarChart.bind(this);
+    this.init = this.init.bind(this);
+    this.renderData = this.renderData.bind(this);
+    this.prepareGroupData = this.prepareGroupData.bind(this);
+    this.prepareProvinceData = this.prepareProvinceData.bind(this);
     this.prepareLineOptions = this.prepareLineOptions.bind(this);
-    this.prepareBarOptions = this.prepareBarOptions.bind(this);
     this.chooseDate = this.chooseDate.bind(this);
     this.closeCalendar = this.closeCalendar.bind(this);
     this.chooseCalendar = this.chooseCalendar.bind(this);
     this.controlChoosePop = this.controlChoosePop.bind(this);
     this.choosePopCallback = this.choosePopCallback.bind(this);
     this.hideLoading = this.hideLoading.bind(this);
+    this.fold = this.fold.bind(this);
+    this.getProvinceData = this.getProvinceData.bind(this);
   }
 
   componentDidMount() {
@@ -114,40 +82,106 @@ class Home extends Component {
 
   init(date) {
     tips("加载中", "loading", 0);
-    this.renderLineChart(date);
-    this.renderNumData(date);
-  }
-
-  async renderLineChart(date) {
-    this.getTradePending = true;
-    const res = await getTrade(date);
-    this.getTradePending = false;
-    this.hideLoading();
-    this.setState({
+    this.setState({ date });
+    this.renderData({
       date,
-      lineData: res
+      pending: "getTradePending",
+      service: getTrade,
+      stateName: "lineData"
+    });
+    this.renderData({
+      date,
+      pending: "getSummaryPending",
+      service: getSummary,
+      stateName: "numData"
+    });
+    this.renderData({
+      date,
+      pending: "getProvincePending",
+      service: getProvince,
+      stateName: "allProvinceData"
     });
   }
 
-  async renderNumData(date) {
-    this.getSummaryPending = true;
-    const res = await getSummary(date);
-    this.getSummaryPending = false;
+  // 从接口拿数据
+  async renderData({ date, pending, service, stateName }) {
+    this[pending] = true;
+    let res = await service(date);
+    if (!res) {
+      if (stateName === 'numData') {
+        ({ numData: res } = this.state);
+      } else {
+        res = [];
+      }
+    }
+    this[pending] = false;
     this.hideLoading();
-    this.setState({
-      numData: res
+    this.setState({ [stateName]: res }, () => {
+      if (stateName === "allProvinceData") {
+        // 针对分省数据做额外的操作
+        this.prepareGroupData();
+        this.prepareProvinceData();
+      }
     });
   }
 
-  renderBarChart(data) {
-    console.log(data);
+  // 根据接口数据准备省份列表
+  prepareProvinceData() {
+    const { allProvinceData, operatorData } = this.state;
+    let provinceData = [];
+    (allProvinceData || []).forEach(item => {
+      operatorData.forEach(operator => {
+        if (item.name.indexOf(operator.label) > -1) {
+          const province = item.name.split(operator.label)[0];
+          if (!provinceData.includes(province)) {
+            provinceData.push(province);
+          }
+        }
+      });
+    });
+    provinceData = provinceData.map(i => ({
+      label: i,
+      value: i,
+      active: false
+    }));
+    this.setState({ provinceData });
+  }
+
+  // 准备集团数据并加入state
+  prepareGroupData() {
+    const { allProvinceData } = this.state;
+    const fixedData = (allProvinceData || []).filter(i => i.group);
+    let groupData = [];
+    fixedData.forEach(i => {
+      if (!groupData.includes(i.group)) {
+        groupData.push(i.group);
+      }
+    });
+    groupData = groupData.map(i => {
+      const children = fixedData.filter(data => data.group === i);
+      let user = 0;
+      let totalRate = 0;
+      children.forEach(item => {
+        user += parseInt(item.user);
+        totalRate += parseFloat(item.rate);
+      });
+      const avgRate = num2Percent(totalRate / children.length);
+      return {
+        group: i,
+        user,
+        avgRate,
+        children,
+        fold: true
+      };
+    });
+    this.setState({ groupData });
   }
 
   prepareLineOptions() {
     const { lineData } = this.state;
     const xCategories = [];
     let newUser = 0;
-    const seriesData = lineData.map(i => {
+    const seriesData = (lineData || []).map(i => {
       newUser += i.tradeCnt;
       const hour = Math.round((i.minOfDay / 60) * 100) / 100;
       return [hour, newUser];
@@ -166,31 +200,6 @@ class Home extends Component {
         {
           ...lineChartConfig.series[0],
           data: seriesData
-        }
-      ]
-    };
-  }
-
-  prepareBarOptions() {
-    const { barData } = this.state;
-    // TODO 映射关系需要改
-    const categories = barData.map(i => i.label);
-    const orderNum = barData.map(i => i.orderNum);
-    const cr = barData.map(i => i.cr);
-    return {
-      ...barChartConfig,
-      xAxis: {
-        ...barChartConfig.xAxis,
-        categories
-      },
-      series: [
-        {
-          ...barChartConfig.series[0],
-          data: orderNum
-        },
-        {
-          ...barChartConfig.series[1],
-          data: cr
         }
       ]
     };
@@ -231,14 +240,38 @@ class Home extends Component {
       chooseArr = [title === "选择运营商" ? "全部运营商" : "全部地区"];
     }
     this.setState({ [filterBackName]: chooseArr.join(" "), [dataName]: data });
-    this.renderBarChart(data);
   }
 
   hideLoading() {
-    const { getTradePending, getSummaryPending } = this;
-    if (!getTradePending && !getSummaryPending) {
+    const { getTradePending, getSummaryPending, getProvincePending } = this;
+    if (!getTradePending && !getSummaryPending && !getProvincePending) {
       hideTips();
     }
+  }
+
+  fold(group) {
+    let { groupData } = this.state;
+    groupData = groupData.map(i => ({
+      ...i,
+      fold: i.group === group ? !i.fold : i.fold
+    }));
+    this.setState({ groupData });
+  }
+
+  // 处理数据为分省数据
+  getProvinceData() {
+    const { allProvinceData = [], provinceData, operatorData } = this.state;
+    const nameArr = [];
+    let provinceArr = provinceData.filter(i => i.active);
+    let operatorArr = operatorData.filter(i => i.active);
+    provinceArr = provinceArr.length === 0 ? provinceData : provinceArr;
+    operatorArr = operatorArr.length === 0 ? operatorData : operatorArr;
+    provinceArr.forEach(province => {
+      operatorArr.forEach(operator => {
+        nameArr.push(province.label + operator.label);
+      });
+    });
+    return (allProvinceData || []).filter(i => !i.group && nameArr.includes(i.name));
   }
 
   render() {
@@ -282,7 +315,7 @@ class Home extends Component {
                 numData.tradeChangeRate < 0 ? styles.green : styles.red
               }
             >
-              {`${(numData.tradeChangeRate * 100).toFixed(2)}%`}
+              {num2Percent(numData.tradeChangeRate)}
             </span>
           </div>
         )
@@ -290,7 +323,7 @@ class Home extends Component {
       {
         id: "todayConversiontRate",
         label: "昨日转化率",
-        value: `${(numData.todayConversiontRate * 100).toFixed(2)}%`,
+        value: num2Percent(numData.todayConversiontRate),
         extraRender: (
           <div>
             较前日{" "}
@@ -299,7 +332,7 @@ class Home extends Component {
                 numData.rateOfConversionRate < 0 ? styles.green : styles.red
               }
             >
-              {`${(numData.rateOfConversionRate * 100).toFixed(2)}%`}
+              {num2Percent(numData.rateOfConversionRate)}
             </span>
           </div>
         )
@@ -307,11 +340,11 @@ class Home extends Component {
     ];
 
     const lineOptions = this.prepareLineOptions();
-    const barOptions = this.prepareBarOptions();
 
     const now = new Date();
-    const { date, showChoosePop, choosePopTitle } = this.state;
-    const { getTradePending, getSummaryPending } = this;
+    const { date, showChoosePop, choosePopTitle, groupData } = this.state;
+    const splitProvinceData = this.getProvinceData();
+    const { getSummaryPending } = this;
 
     return (
       <div className={styles.home}>
@@ -336,13 +369,13 @@ class Home extends Component {
           <div className={styles.lineHead}>
             <div className={styles.lineSubTitle}>今日新增用户数</div>
             <div className={styles.lineTitle}>{this.newUser}</div>
-            {(!getSummaryPending && !isNaN(numData.todayTradeCnt / numData.todayUv)) && (
-              <div className={styles.lineSubTitle}>
-                今日转化率：
-                {(numData.todayTradeCnt / numData.todayUv * 100).toFixed(2)}
-                %
-              </div>
-            )}
+            {!getSummaryPending &&
+              !isNaN(numData.todayTradeCnt / numData.todayUv) && (
+                <div className={styles.lineSubTitle}>
+                  今日转化率：
+                  {num2Percent(numData.todayTradeCnt / numData.todayUv)}
+                </div>
+              )}
             <div className={styles.lineDate} onClick={this.chooseDate}>
               <span>{date}</span>
               <div className={styles.arrow} />
@@ -364,18 +397,55 @@ class Home extends Component {
           </div>
         )}
 
-        {/* 柱状图 */}
-        {/* <div className={styles.barChart}>
+        <div className={styles.h3} />
+
+        {/* 集团数据 */}
+        <div className={styles.barChart}>
           <div className={styles.barTitle}>
-            <div className={styles.title}>今日分省数据</div>
-            <div className={styles.colorTips}>
-              <span className={styles.blueTips} />
-              <span>订单量</span>
-              <span className={styles.greenTips} />
-              <span>转化率</span>
-            </div>
+            <div className={styles.title}>今日集团数据</div>
           </div>
           
+          {groupData.length > 0 ? (
+            <>
+              <div className={styles.tHead}>
+                <div>所属区域</div>
+                <div>新增用户数</div>
+                <div>转化率</div>
+              </div>
+              <div className={styles.tBody}>
+                {groupData.map(i => (
+                  <div className={styles.tItem} key={i.group}>
+                    <div className={styles.tParent}>
+                      <div>{i.group}</div>
+                      <div>{i.user}</div>
+                      <div>{i.avgRate}</div>
+                      <div onClick={() => this.fold(i.group)}>
+                        {i.fold ? "展开" : "收起"}
+                      </div>
+                    </div>
+                    {!i.fold &&
+                      i.children.length > 0 &&
+                      i.children.map(item => (
+                        <div className={styles.tChildren} key={item.name}>
+                          <div>{item.name}</div>
+                          <div>{item.user}</div>
+                          <div>{num2Percent(item.rate)}</div>
+                        </div>
+                      ))}
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className={styles.empty}>没有更多数据</div>
+          )}
+        </div>
+
+        {/* 分省数据 */}
+        <div className={styles.barChart}>
+          <div className={styles.barTitle}>
+            <div className={styles.title}>今日分省数据</div>
+          </div>
           <div className={styles.filterEnterBox}>
             <div
               className={styles.filterEnterItem}
@@ -392,8 +462,25 @@ class Home extends Component {
               <span className={styles.itemArrow} />
             </div>
           </div>
-          <HighchartsReact highcharts={Highcharts} options={barOptions} />
-        </div> */}
+          {splitProvinceData.length > 0 ? (
+            <>
+              <div className={styles.tHead}>
+                <div>所属区域</div>
+                <div>新增用户数</div>
+                {/* <div>转化率</div> */}
+              </div>
+              {splitProvinceData.map(i => (
+                <div className={styles.tChildren} key={i.name}>
+                  <div>{i.name}</div>
+                  <div>{i.user}</div>
+                  {/* <div>{num2Percent(i.rate)}</div> */}
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className={styles.empty}>没有更多数据</div>
+          )}
+        </div>
       </div>
     );
   }

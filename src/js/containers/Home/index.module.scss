@@ -63,8 +63,10 @@
 .red {
   color: #ee3a58;
 }
+.h3 {
+  height: 0.3rem;
+}
 .barChart {
-  margin-top: 0.4rem;
   background-color: #fff;
   padding: 0.4rem 0;
 }
@@ -73,6 +75,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 0.4rem;
+  margin-bottom: 0.2rem;
   .title {
     display: flex;
     align-items: center;
@@ -106,7 +109,7 @@
   background-color: #0cc32d;
 }
 .filterEnterBox {
-  margin: 0.3rem 0;
+  margin-bottom: 0.3rem;
   padding: 0 0.4rem;
 }
 .filterEnterItem {
@@ -117,7 +120,7 @@
   border-radius: 0.6rem;
   padding: 0 0.3rem;
   font-size: 0.26rem;
-  margin-right: .2rem;
+  margin-right: 0.2rem;
 }
 .itemArrow {
   display: inline-block;
@@ -126,4 +129,29 @@
   border-top: 0.1rem solid #333;
   margin-top: 0.24rem;
   margin-left: 0.1rem;
+}
+.tParent,
+.tChildren,
+.tHead {
+  display: flex;
+  align-items: center;
+  font-size: 0.28rem;
+  margin-bottom: 0.4rem;
+  div {
+    width: 28%;
+    text-align: center;
+    &:nth-child(4) {
+      width: 16%;
+    }
+  }
+}
+.tHead {
+  text-shadow: 0 0;
+}
+.empty {
+  height: 2rem;
+  line-height: 2rem;
+  font-size: 0.3rem;
+  color: #ccc;
+  text-align: center;
 }

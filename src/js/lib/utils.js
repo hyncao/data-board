@@ -11,7 +11,7 @@ export const secondUrl = '/';
 
 export const connectSymbol = '-';
 
-export const apiUrl = `/litevip-async/db/`;
+export const apiUrl = `/litevipasync/db/`;
 export const preUrl = `/data${connectSymbol}board${secondUrl}`;
 
 // export const appUrl = `https://litevip.jujienet.com${preUrl}`;
@@ -112,6 +112,7 @@ export const jumpUrl = (url, history) => {
 
 axios.interceptors.response.use(response => {
   // 对响应数据做点什么
+  debugger
   return response.data;
   // if (response.data.code === 200) {
   //   return response.data;
@@ -306,3 +307,11 @@ export const showCountBox = () => {
   const showCountFlag = getLS('showCountFlag');
   return showCountFlag === 'y';
 }
+
+export const num2Percent = (num) => {
+  if ((typeof num === 'number') && !isNaN(num)) {
+    return `${(num * 100).toFixed(2)}%`
+  } else {
+    return '暂无'
+  }
+};

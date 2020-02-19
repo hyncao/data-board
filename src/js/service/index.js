@@ -13,3 +13,8 @@ export const getSummary = (date) => request({
   url: `${uri}litevipSummary/${date}`,
   method: 'POST',
 });
+
+export const getProvince = (date) => request({
+  url: `${uri}litevipProvince/${date}`,
+  method: 'POST',
+});

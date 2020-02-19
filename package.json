@@ -179,5 +179,7 @@
     "less-loader": "^5.0.0"
   },
   "homepage": ".",
-  "proxy": "http://120.27.212.44"
+  "proxy2": "https://www.fastmock.site/mock/d46bab2dc0ae8e017967416f1f0965f0",
+  "proxy": "http://120.27.212.44",
+  "proxy1": "http://125.120.145.82:8848"
 }
